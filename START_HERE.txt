@@ -1,0 +1,112 @@
+DIABETES RISK PREDICTION
+Start here
+
+WHAT TO SUBMIT
+Upload the complete Diabetes_Risk_Prediction folder as a ZIP file. It contains
+the code, the dataset, the app, the report, and the setup instructions.
+
+To read the results, open outputs/Project_Report.html in a web browser. You do
+not need to install anything to read the report.
+
+TO OPEN THE APP ON WINDOWS
+This project uses Python 3.12. If you have the Python install manager already,
+open PowerShell and install Python 3.12 by running:
+
+    py install 3.12
+
+Check that it is available:
+
+    py -3.12 --version
+
+Open PowerShell in this project folder, then install the packages:
+
+    py -3.12 -m pip install -r requirements.txt
+
+Start the app:
+
+    py -3.12 -m streamlit run app.py
+
+Open the web address printed in PowerShell. It will usually be
+http://localhost:8501. Keep PowerShell open while you use the app.
+Choose Patient score to enter one patient's details. Choose Batch screening
+to rank a CSV of patients and select up to 30% for follow-up.
+
+If you prefer, run the console version with:
+
+    py -3.12 diabetes_prediction.py
+
+RUN ON A MAC OR OTHER COMPUTER
+Install Python 3.12, open a terminal in this folder, and run:
+
+    python3 -m pip install -r requirements.txt
+    python3 -m streamlit run app.py
+
+The requirements intentionally pin package versions for reproducibility. If a
+package installer tries to build NumPy from source, check that you are using
+Python 3.12; Python 3.14 may not have a compatible wheel for these pinned versions.
+
+RUN A BATCH FROM THE CONSOLE
+
+    py -3.12 diabetes_prediction.py --batch data/sample_patients.csv
+
+This produces outputs/batch_screening_report.csv. The example CSV has ten rows
+from the held-out test set, with Outcome removed. It is for demonstrating the
+app, not an independent test of model performance.
+
+WHAT EACH APP SCREEN DOES
+Dashboard: shows the dataset size, test results and available capacity.
+Patient score: enters eight measurements and displays the model score.
+Model performance: compares three models and their evaluation results.
+Batch screening: ranks a group of patients and marks the top 30% for follow-up.
+
+WHAT THE PROJECT DOES
+The program replaces zero values in glucose, blood pressure, skin thickness,
+insulin and BMI with missing values, then fills them using training data.
+Zero pregnancies is valid and is kept. It compares KNN, Logistic Regression and
+a Decision Tree. A validation set helps select a model and threshold; a separate
+test set is used for the final evaluation. The program does not use Outcome when
+scoring a new patient batch.
+
+The strict capacity rule selects floor(0.30 x batch size) patients. For example,
+a batch of ten has three slots. Ties follow the order of rows in the uploaded CSV.
+For batches smaller than four, the strict 30% rule allows no slots.
+
+FILES IN THE FOLDER
+diabetes_prediction.py       Model preparation, training and console program
+app.py                       Streamlit app
+project_report.py            Builds the charts and written reports
+requirements.txt             Python packages and versions
+test_project.py              Project checks
+data/diabetes.csv            Dataset used for the project
+data/sample_patients.csv     Example batch for the app
+data/SOURCE.txt              Dataset source and notes
+outputs/Project_Report.html  Illustrated report, opens in a browser
+outputs/evaluation_report.txt Plain text report
+outputs/model_comparison.csv Model results on validation and test data
+outputs/test_screening_report.csv Test set ranked under the capacity rule
+outputs/batch_screening_report.csv Example batch results
+outputs/model.joblib         Saved model and preprocessing
+outputs/metadata.json        Model choice, threshold, and split information
+outputs/data_audit.csv       Data types and missing measurement counts
+outputs/split_assignments.csv Training, validation and test row assignments
+outputs/figures/             Summary and model performance charts
+outputs/confusion_matrices/  Confusion matrix images and data
+VIVA_GUIDE.txt               Plain-language project and presentation notes
+outputs/VERIFICATION.txt     Checks run during preparation
+
+HOW TO READ THE RESULTS
+The three data groups serve different purposes. The model learns from training
+rows. Validation rows help choose the model and threshold. Test rows are held
+back for the final evaluation. The program does not fit the model again on the
+validation or test rows.
+
+The results show three decision rules. A score threshold of 0.5 is the default.
+Another threshold is chosen using validation data. The 30% capacity rule ranks
+the entire batch and chooses the allotted number of patients; this is the rule
+that guarantees the clinic stays within capacity.
+
+PLEASE NOTE
+This is a coursework demonstration, not a diagnostic tool. The score is not a
+calibrated medical risk estimate, and the results do not show that the model
+would work for a local clinic. Glucose and insulin require lab measurements,
+which limits how useful these inputs are for screening before blood tests.

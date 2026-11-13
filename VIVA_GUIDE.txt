@@ -1,0 +1,90 @@
+DIABETES RISK PROJECT
+Short project introduction and presentation notes
+
+HOW I WOULD INTRODUCE THE PROJECT
+I compared three models on the Pima diabetes dataset. The project ranks a whole
+batch of patients because the clinic can only test 30% of walk-ins. I used
+validation data to choose a model, then checked its results on a separate test
+set. The app can score one example record or rank a batch.
+
+1. Which data did you use?
+The CSV has 768 patient records, eight input measurements and an Outcome column.
+It is the Pima diabetes dataset. This project uses a public copy hosted by Plotly;
+the assignment also links to the dataset on Kaggle. See data/SOURCE.txt.
+
+2. Why did you treat some zeros as missing?
+The dataset uses zero to stand in for missing glucose, blood pressure, skin
+thickness, insulin and BMI measurements. Zero pregnancies can be real, so I kept
+it. I filled missing measurements using medians from the training group only.
+
+3. Why use the median?
+The median gives a simple typical value and is less affected by extreme values
+than the mean. It is only an approximation, especially for columns with many
+missing measurements.
+
+4. Why did you scale some features?
+KNN compares distances, so features with larger numeric ranges could otherwise
+have more influence. Scaling also helps Logistic Regression. A Decision Tree
+splits on one feature at a time, so scaling is not needed for that model.
+
+5. Why split the data into three groups?
+The model learns from 460 training rows. I use 154 validation rows to choose a
+model and a threshold, then report final results on 154 test rows. Keeping the
+test rows separate helps prevent the evaluation from influencing model choice.
+
+6. What does “stratified split” mean?
+It keeps roughly the same share of positive and negative outcomes in each group.
+That matters here because fewer records have Outcome = 1.
+
+7. What is data leakage?
+Data leakage happens when information from the held-out rows changes how a model
+is prepared or selected. The imputer and scaler learn their settings from the
+training rows. Validation helps with selection; the test results come afterward.
+
+8. Which model did you select, and why?
+Logistic Regression had the best validation recall at the 30% capacity, with
+precision and average precision used to break ties. I chose it before checking
+the final test results. The Decision Tree did better on this particular test
+batch. Switching to it afterward would mean using the test set to pick the model.
+Results could differ on another split.
+
+9. What was the test result at the 30% capacity?
+The selected model chose 46 of 154 test records. Of the 54 positive cases,
+it selected 27. Its recall at capacity was 50.0%. That means it caught half of the
+positive cases in this test group and missed the other half.
+
+10. What is precision?
+Precision is the share of selected patients who were positive in the dataset.
+Here it was 27 out of 46, or 58.7%.
+
+11. Why not choose the model with the highest accuracy?
+Accuracy counts both positive and negative cases. The clinic's main requirement
+is to catch positive cases despite limited testing capacity, so recall at 30%
+is a closer match to the stated goal.
+
+12. Why does the app use ranking as well as a score threshold?
+The validation threshold for the selected model is 0.468382. The number of
+patients above a threshold can change from batch to batch. Ranking the batch and
+selecting floor(30% of its rows) always follows the capacity limit. Ten patients
+give three slots. A batch under four gives no slots under this strict rule.
+
+13. What does the confusion matrix show?
+It counts correct and incorrect decisions. For the selected model at 30% capacity,
+there were 27 true positives, 19 false positives, 27 false negatives and
+81 true negatives. The report includes the matrices for all three models.
+
+14. Is the app ready for use in a clinic?
+No. It is a coursework project, not a diagnostic tool. The data may not represent
+the clinic, the model score is not a calibrated medical risk, and the test group
+is small. Glucose and insulin also require lab measurements, so these features
+do not establish a practical way to screen people before a blood test.
+
+15. What could be improved next?
+I would compare settings using cross-validation on the development data, check
+how well scores are calibrated, and evaluate a final model on independent data
+that represents the clinic's patients. Any clinical use would need expert review.
+
+DEMO ORDER
+Open the dashboard, show the project summary, enter an example patient, compare
+the models, then upload the ten-row example batch. The batch should show three
+patients selected under the 30% limit.
